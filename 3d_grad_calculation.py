@@ -179,97 +179,97 @@ DRR_lat_cartesian_array_augmented_transformed = np.dot(invT_lat, DRR_lat_cartesi
 DRR_lat_cartesian_array_transformed = np.transpose(np.dot(Tn, DRR_lat_cartesian_array_augmented_transformed)[0:3])
 DRR_lat_cartesian_array_new = np.reshape(DRR_lat_cartesian_array_transformed, (size_y_lat, size_x_lat, 3), order='C')
 
-# Calculate vector field
-x_ray_ap_grad_array = np.load("x_ray_ap_grad.npy")
-x_ray_lat_grad_array = np.load("x_ray_lat_grad.npy")
-x_ray_lat_grad_array_norm = np.linalg.norm(x_ray_lat_grad_array, axis=2)
-print(np.median(x_ray_lat_grad_array_norm))
-x_ray_lat_grad_array_norm[x_ray_lat_grad_array_norm > 2000] = 2000
-plt.imshow(x_ray_lat_grad_array_norm, cmap='gray')
-plt.show()
-DRRorigin_ap_new = DRR_ap_cartesian_array_new[0][0]
-DRRorigin_lat_new = DRR_lat_cartesian_array_new[0][0]
-print(DRRorigin_lat_new)
-vector_field = np.zeros((size_z, size_y, size_x, 3))
-for i in range(size_x):
-    for j in range(size_y):
-        for k in range(size_z):
-            reconstruct_point = CT_in_cartesian_array[k][j][i]
-            project_point_factor_ap = focal_length / (reconstruct_point[1] - source_ap[1])
-            project_point_ap = np.array([
-                source_ap[0] + (reconstruct_point[0] - source_ap[0]) * project_point_factor_ap,
-                source_ap[1] + (reconstruct_point[1] - source_ap[1]) * project_point_factor_ap,
-                source_ap[2] + (reconstruct_point[2] - source_ap[2]) * project_point_factor_ap
-            ])
-            project_point_ap_index = [
-                int((project_point_ap[0] - DRRorigin_ap_new[0]) / spacing_x_ap),
-                int((-project_point_ap[2] + DRRorigin_ap_new[2]) / spacing_y_ap)
-            ]
-
-            # if project_point_ap_index[0] >= 1550 or \
-            #     project_point_ap_index[1] >= 2000 or \
-            #     project_point_ap_index[0] < 1150 or \
-            #     project_point_ap_index[1] < 1400:
-            #     continue
-            if project_point_ap_index[0] >= 1600 or \
-                project_point_ap_index[1] >= 2988 or \
-                project_point_ap_index[0] < 1100 or \
-                project_point_ap_index[1] < 2100:
-                continue
-            # if project_point_ap_index[0] >= size_x_ap or \
-            #     project_point_ap_index[1] >= size_y_ap or \
-            #     project_point_ap_index[0] < 0 or \
-            #     project_point_ap_index[1] < 0:
-            #     continue
-
-            project_point_factor_lat = -focal_length / (reconstruct_point[0] - source_lat[0])
-            project_point_lat = np.array([
-                source_lat[0] + (reconstruct_point[0] - source_lat[0]) * project_point_factor_lat,
-                source_lat[1] + (reconstruct_point[1] - source_lat[1]) * project_point_factor_lat,
-                source_lat[2] + (reconstruct_point[2] - source_lat[2]) * project_point_factor_lat
-            ])
-            project_point_lat_index = [
-                int((project_point_lat[1] - DRRorigin_lat_new[1]) / spacing_x_lat),
-                int((-project_point_lat[2] + DRRorigin_lat_new[2]) / spacing_y_lat)
-            ]
-
-            # if project_point_lat_index[0] >= (size_x_lat - 600) or \
-            #     project_point_lat_index[1] >= 2000 or \
-            #     project_point_lat_index[0] < (size_x_lat - 1000) or \
-            #     project_point_lat_index[1] < 1400:
-            #     continue
-
-            if project_point_lat_index[0] >= (size_x_lat - 700) or \
-                project_point_lat_index[1] >= 2984 or \
-                project_point_lat_index[0] < (size_x_lat - 1300) or \
-                project_point_lat_index[1] < 2100:
-                continue
-
-            # if project_point_lat_index[0] >= size_x_lat or \
-            #     project_point_lat_index[1] >= size_y_lat or \
-            #     project_point_lat_index[0] < 0 or \
-            #     project_point_lat_index[1] < 0:
-            #     continue
-
-            e_ap = project_point_ap - source_ap
-            n_ap = np.array([0, -1, 0])
-            x_ray_ap_grad = x_ray_ap_grad_array[project_point_ap_index[1]][project_point_ap_index[0]]
-            vector_ap = (np.cross(np.cross(n_ap, np.array([x_ray_ap_grad[0], 0, -x_ray_ap_grad[1]])), e_ap) / (np.dot(n_ap, e_ap))) * \
-                (np.linalg.norm(project_point_ap - source_ap) / np.linalg.norm(reconstruct_point - source_ap))
-
-            e_lat = project_point_lat - source_lat
-            n_lat = np.array([1, 0, 0])
-            x_ray_lat_grad = x_ray_lat_grad_array[project_point_lat_index[1]][project_point_lat_index[0]]
-            vector_lat = (np.cross(np.cross(n_lat, np.array([0, x_ray_lat_grad[0], -x_ray_lat_grad[1]])), e_lat) / (np.dot(n_lat, e_lat))) * \
-                (np.linalg.norm(project_point_lat - source_lat) / np.linalg.norm(reconstruct_point - source_lat))
-
-            vector_final = vector_ap + vector_lat
-
-            vector_field[k][j][i][0] = vector_final[0]
-            vector_field[k][j][i][1] = vector_final[1]
-            vector_field[k][j][i][2] = vector_final[2]
-
-np.save("vector_field_part.npy", vector_field)
+# # Calculate vector field
+# x_ray_ap_grad_array = np.load("x_ray_ap_grad.npy")
+# x_ray_lat_grad_array = np.load("x_ray_lat_grad.npy")
+# x_ray_lat_grad_array_norm = np.linalg.norm(x_ray_lat_grad_array, axis=2)
+# print(np.median(x_ray_lat_grad_array_norm))
+# x_ray_lat_grad_array_norm[x_ray_lat_grad_array_norm > 2000] = 2000
+# plt.imshow(x_ray_lat_grad_array_norm, cmap='gray')
+# plt.show()
+# DRRorigin_ap_new = DRR_ap_cartesian_array_new[0][0]
+# DRRorigin_lat_new = DRR_lat_cartesian_array_new[0][0]
+# print(DRRorigin_lat_new)
+# vector_field = np.zeros((size_z, size_y, size_x, 3))
+# for i in range(size_x):
+#     for j in range(size_y):
+#         for k in range(size_z):
+#             reconstruct_point = CT_in_cartesian_array[k][j][i]
+#             project_point_factor_ap = focal_length / (reconstruct_point[1] - source_ap[1])
+#             project_point_ap = np.array([
+#                 source_ap[0] + (reconstruct_point[0] - source_ap[0]) * project_point_factor_ap,
+#                 source_ap[1] + (reconstruct_point[1] - source_ap[1]) * project_point_factor_ap,
+#                 source_ap[2] + (reconstruct_point[2] - source_ap[2]) * project_point_factor_ap
+#             ])
+#             project_point_ap_index = [
+#                 int((project_point_ap[0] - DRRorigin_ap_new[0]) / spacing_x_ap),
+#                 int((-project_point_ap[2] + DRRorigin_ap_new[2]) / spacing_y_ap)
+#             ]
+#
+#             # if project_point_ap_index[0] >= 1550 or \
+#             #     project_point_ap_index[1] >= 2000 or \
+#             #     project_point_ap_index[0] < 1150 or \
+#             #     project_point_ap_index[1] < 1400:
+#             #     continue
+#             if project_point_ap_index[0] >= 1600 or \
+#                 project_point_ap_index[1] >= 2988 or \
+#                 project_point_ap_index[0] < 1100 or \
+#                 project_point_ap_index[1] < 2100:
+#                 continue
+#             # if project_point_ap_index[0] >= size_x_ap or \
+#             #     project_point_ap_index[1] >= size_y_ap or \
+#             #     project_point_ap_index[0] < 0 or \
+#             #     project_point_ap_index[1] < 0:
+#             #     continue
+#
+#             project_point_factor_lat = -focal_length / (reconstruct_point[0] - source_lat[0])
+#             project_point_lat = np.array([
+#                 source_lat[0] + (reconstruct_point[0] - source_lat[0]) * project_point_factor_lat,
+#                 source_lat[1] + (reconstruct_point[1] - source_lat[1]) * project_point_factor_lat,
+#                 source_lat[2] + (reconstruct_point[2] - source_lat[2]) * project_point_factor_lat
+#             ])
+#             project_point_lat_index = [
+#                 int((project_point_lat[1] - DRRorigin_lat_new[1]) / spacing_x_lat),
+#                 int((-project_point_lat[2] + DRRorigin_lat_new[2]) / spacing_y_lat)
+#             ]
+#
+#             # if project_point_lat_index[0] >= (size_x_lat - 600) or \
+#             #     project_point_lat_index[1] >= 2000 or \
+#             #     project_point_lat_index[0] < (size_x_lat - 1000) or \
+#             #     project_point_lat_index[1] < 1400:
+#             #     continue
+#
+#             if project_point_lat_index[0] >= (size_x_lat - 700) or \
+#                 project_point_lat_index[1] >= 2984 or \
+#                 project_point_lat_index[0] < (size_x_lat - 1300) or \
+#                 project_point_lat_index[1] < 2100:
+#                 continue
+#
+#             # if project_point_lat_index[0] >= size_x_lat or \
+#             #     project_point_lat_index[1] >= size_y_lat or \
+#             #     project_point_lat_index[0] < 0 or \
+#             #     project_point_lat_index[1] < 0:
+#             #     continue
+#
+#             e_ap = project_point_ap - source_ap
+#             n_ap = np.array([0, -1, 0])
+#             x_ray_ap_grad = x_ray_ap_grad_array[project_point_ap_index[1]][project_point_ap_index[0]]
+#             vector_ap = (np.cross(np.cross(n_ap, np.array([x_ray_ap_grad[0], 0, -x_ray_ap_grad[1]])), e_ap) / (np.dot(n_ap, e_ap))) * \
+#                 (np.linalg.norm(project_point_ap - source_ap) / np.linalg.norm(reconstruct_point - source_ap))
+#
+#             e_lat = project_point_lat - source_lat
+#             n_lat = np.array([1, 0, 0])
+#             x_ray_lat_grad = x_ray_lat_grad_array[project_point_lat_index[1]][project_point_lat_index[0]]
+#             vector_lat = (np.cross(np.cross(n_lat, np.array([0, x_ray_lat_grad[0], -x_ray_lat_grad[1]])), e_lat) / (np.dot(n_lat, e_lat))) * \
+#                 (np.linalg.norm(project_point_lat - source_lat) / np.linalg.norm(reconstruct_point - source_lat))
+#
+#             vector_final = vector_ap + vector_lat
+#
+#             vector_field[k][j][i][0] = vector_final[0]
+#             vector_field[k][j][i][1] = vector_final[1]
+#             vector_field[k][j][i][2] = vector_final[2]
+#
+# np.save("vector_field_part.npy", vector_field)
 vector_field = np.load("vector_field.npy")
 
 # vector_field = CT_grad_array.copy()
@@ -291,7 +291,7 @@ plt.show()
 elliptical_mask = np.load("elliptical_mask_for_grad_rec.npy")
 CT_grad_array[elliptical_mask == False] = np.array([0, 0, 0])
 CT_grad_norm = np.linalg.norm(CT_grad_array, axis=3)
-strong_intensity_mask = CT_grad_norm > 200  # strong_intensity_mask = CT_grad_norm > np.median(CT_grad_norm)
+strong_intensity_mask = CT_grad_norm > 500  # strong_intensity_mask = CT_grad_norm > np.median(CT_grad_norm)
 strong_intensity_mask_index = np.array(np.where(strong_intensity_mask == True)).T
 CT_grad_strong = CT_grad_array[strong_intensity_mask]
 CT_grad_strong_unit = CT_grad_strong / np.tile(np.linalg.norm(CT_grad_strong, axis=1), (3, 1)).T
