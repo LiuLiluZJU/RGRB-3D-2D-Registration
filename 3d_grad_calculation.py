@@ -67,23 +67,23 @@ source[1] = center[1]
 source[2] = center[2] - focal_length / 2
 
 # Calculate CT's gradient
-CT_grad_array = np.zeros((size_z, size_y, size_x, 3))
-CT_in_array_padded = np.pad(CT_in_array, pad_width=1, mode='edge')
-print(CT_in_array_padded.shape)
-for i in range(size_x):
-    for j in range(size_y):
-        for k in range(size_z):
-            # # Transform Cartesian coordinate to spherical coordinate
-            # # r
-            # R = np.linalg.norm(CT_in_cartesian_array[k][j][i] - source)
-            # # phi
-            # phi = np.arctan(CT_in_cartesian_array[k][j][i][1] / CT_in_cartesian_array[k][j][i][0])
-            # # theta
-            # theta = np.arcsin(CT_in_cartesian_array[k][j][i][0] / (np.cos(phi) * R))
-            CT_grad_array[k][j][i][0] = CT_in_array_padded[k + 1][j + 1][i + 2] - CT_in_array_padded[k + 1][j + 1][i]
-            CT_grad_array[k][j][i][1] = CT_in_array_padded[k + 1][j + 2][i + 1] - CT_in_array_padded[k + 1][j][i + 1]
-            CT_grad_array[k][j][i][2] = CT_in_array_padded[k + 2][j + 1][i + 1] - CT_in_array_padded[k][j + 1][i + 1]
-np.save("3d_grad.npy", CT_grad_array)
+# CT_grad_array = np.zeros((size_z, size_y, size_x, 3))
+# CT_in_array_padded = np.pad(CT_in_array, pad_width=1, mode='edge')
+# print(CT_in_array_padded.shape)
+# for i in range(size_x):
+#     for j in range(size_y):
+#         for k in range(size_z):
+#             # # Transform Cartesian coordinate to spherical coordinate
+#             # # r
+#             # R = np.linalg.norm(CT_in_cartesian_array[k][j][i] - source)
+#             # # phi
+#             # phi = np.arctan(CT_in_cartesian_array[k][j][i][1] / CT_in_cartesian_array[k][j][i][0])
+#             # # theta
+#             # theta = np.arcsin(CT_in_cartesian_array[k][j][i][0] / (np.cos(phi) * R))
+#             CT_grad_array[k][j][i][0] = CT_in_array_padded[k + 1][j + 1][i + 2] - CT_in_array_padded[k + 1][j + 1][i]
+#             CT_grad_array[k][j][i][1] = CT_in_array_padded[k + 1][j + 2][i + 1] - CT_in_array_padded[k + 1][j][i + 1]
+#             CT_grad_array[k][j][i][2] = CT_in_array_padded[k + 2][j + 1][i + 1] - CT_in_array_padded[k][j + 1][i + 1]
+# np.save("3d_grad.npy", CT_grad_array)
 CT_grad_array = np.load("3d_grad.npy")
 CT_grad_norm = np.linalg.norm(CT_grad_array, axis=3)
 # CT_grad_norm = CT_grad_norm[::-1, ::-1, :]
@@ -211,11 +211,16 @@ for i in range(size_x):
             #     project_point_ap_index[0] < 1150 or \
             #     project_point_ap_index[1] < 1400:
             #     continue
-            if project_point_ap_index[0] >= size_x_ap or \
-                project_point_ap_index[1] >= size_y_ap or \
-                project_point_ap_index[0] < 0 or \
-                project_point_ap_index[1] < 0:
+            if project_point_ap_index[0] >= 1600 or \
+                project_point_ap_index[1] >= 2988 or \
+                project_point_ap_index[0] < 1100 or \
+                project_point_ap_index[1] < 2100:
                 continue
+            # if project_point_ap_index[0] >= size_x_ap or \
+            #     project_point_ap_index[1] >= size_y_ap or \
+            #     project_point_ap_index[0] < 0 or \
+            #     project_point_ap_index[1] < 0:
+            #     continue
 
             project_point_factor_lat = -focal_length / (reconstruct_point[0] - source_lat[0])
             project_point_lat = np.array([
@@ -234,11 +239,17 @@ for i in range(size_x):
             #     project_point_lat_index[1] < 1400:
             #     continue
 
-            if project_point_lat_index[0] >= size_x_lat or \
-                project_point_lat_index[1] >= size_y_lat or \
-                project_point_lat_index[0] < 0 or \
-                project_point_lat_index[1] < 0:
+            if project_point_lat_index[0] >= (size_x_lat - 700) or \
+                project_point_lat_index[1] >= 2984 or \
+                project_point_lat_index[0] < (size_x_lat - 1300) or \
+                project_point_lat_index[1] < 2100:
                 continue
+
+            # if project_point_lat_index[0] >= size_x_lat or \
+            #     project_point_lat_index[1] >= size_y_lat or \
+            #     project_point_lat_index[0] < 0 or \
+            #     project_point_lat_index[1] < 0:
+            #     continue
 
             e_ap = project_point_ap - source_ap
             n_ap = np.array([0, -1, 0])
@@ -258,7 +269,7 @@ for i in range(size_x):
             vector_field[k][j][i][1] = vector_final[1]
             vector_field[k][j][i][2] = vector_final[2]
 
-np.save("vector_field.npy", vector_field)
+np.save("vector_field_part.npy", vector_field)
 vector_field = np.load("vector_field.npy")
 
 # vector_field = CT_grad_array.copy()
