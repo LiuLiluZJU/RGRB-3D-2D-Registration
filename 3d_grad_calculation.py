@@ -211,8 +211,13 @@ DRR_lat_cartesian_array_new = np.reshape(DRR_lat_cartesian_array_transformed, (s
 #             #     project_point_ap_index[0] < 1150 or \
 #             #     project_point_ap_index[1] < 1400:
 #             #     continue
+#             # if project_point_ap_index[0] >= 1600 or \
+#             #     project_point_ap_index[1] >= 2988 or \
+#             #     project_point_ap_index[0] < 1100 or \
+#             #     project_point_ap_index[1] < 2100:
+#             #     continue
 #             if project_point_ap_index[0] >= 1600 or \
-#                 project_point_ap_index[1] >= 2988 or \
+#                 project_point_ap_index[1] >= 2400 or \
 #                 project_point_ap_index[0] < 1100 or \
 #                 project_point_ap_index[1] < 2100:
 #                 continue
@@ -239,10 +244,16 @@ DRR_lat_cartesian_array_new = np.reshape(DRR_lat_cartesian_array_transformed, (s
 #             #     project_point_lat_index[1] < 1400:
 #             #     continue
 #
-#             if project_point_lat_index[0] >= (size_x_lat - 700) or \
-#                 project_point_lat_index[1] >= 2984 or \
-#                 project_point_lat_index[0] < (size_x_lat - 1300) or \
-#                 project_point_lat_index[1] < 2100:
+#             # if project_point_lat_index[0] >= (size_x_lat - 700) or \
+#             #     project_point_lat_index[1] >= 2984 or \
+#             #     project_point_lat_index[0] < (size_x_lat - 1300) or \
+#             #     project_point_lat_index[1] < 2100:
+#             #     continue
+#
+#             if project_point_lat_index[0] >= (size_x_lat - 650) or \
+#                 project_point_lat_index[1] >= 2460 or \
+#                 project_point_lat_index[0] < (size_x_lat - 1100) or \
+#                 project_point_lat_index[1] < 2200:
 #                 continue
 #
 #             # if project_point_lat_index[0] >= size_x_lat or \

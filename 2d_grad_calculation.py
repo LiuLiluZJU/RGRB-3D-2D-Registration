@@ -23,22 +23,26 @@ x_ray_ap_grad_array = np.zeros((size_y_ap, size_x_ap, 2))
 x_ray_lat_grad_array = np.zeros((size_y_lat, size_x_lat, 2))
 print(x_ray_ap_array_padded.dtype)
 print(x_ray_ap_array_padded.dtype)
-for i in range(size_x_ap):
-    for j in range(size_y_ap):
+# for i in range(size_x_ap):
+#     for j in range(size_y_ap):
 # for i in range(1100, 1600):
 #     for j in range(2100, 2988):
 # for i in range(1150, 1550):
 #     for j in range(1400, 2000):
+for i in range(1100, 1600):
+    for j in range(2100, 2400):
         x_ray_ap_grad_array[j][i][0] = (x_ray_ap_array_padded[j][i + 2] + 2 * x_ray_ap_array_padded[j + 1][i + 2] + x_ray_ap_array_padded[j + 2][i + 2]) - \
                                        (x_ray_ap_array_padded[j][i] + 2 * x_ray_ap_array_padded[j + 1][i] + x_ray_ap_array_padded[j + 2][i])
         x_ray_ap_grad_array[j][i][1] = (x_ray_ap_array_padded[j + 2][i] + 2 * x_ray_ap_array_padded[j + 2][i + 1] + x_ray_ap_array_padded[j + 2][i + 2]) - \
                                        (x_ray_ap_array_padded[j][i] + 2 * x_ray_ap_array_padded[j][i + 1] + x_ray_ap_array_padded[j][i + 2])
-for i in range(size_x_lat):
-    for j in range(size_y_lat):
+# for i in range(size_x_lat):
+#     for j in range(size_y_lat):
 # for i in range((size_x_lat - 1300), (size_x_lat - 700)):
 #     for j in range(2100, 2984):
 # for i in range((size_x_lat - 1000), (size_x_lat - 600)):
 #     for j in range(1400, 2000):
+for i in range((size_x_lat - 1100), (size_x_lat - 650)):
+    for j in range(2200, 2460):
         x_ray_lat_grad_array[j][i][0] = (x_ray_lat_array_padded[j][i + 2] + 2 * x_ray_lat_array_padded[j + 1][i + 2] + x_ray_lat_array_padded[j + 2][i + 2]) - \
                                        (x_ray_lat_array_padded[j][i] + 2 * x_ray_lat_array_padded[j + 1][i] + x_ray_lat_array_padded[j + 2][i])
         x_ray_lat_grad_array[j][i][1] = (x_ray_lat_array_padded[j + 2][i] + 2 * x_ray_lat_array_padded[j + 2][i + 1] + x_ray_lat_array_padded[j + 2][i + 2]) - \
